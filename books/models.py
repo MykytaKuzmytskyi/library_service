@@ -1,5 +1,4 @@
 from django.db import models
-from moneyfield import MoneyField
 
 COVER_CHOICES = (
     ("H", "HARD"),
@@ -16,8 +15,4 @@ class Book(models.Model):
         default="H",
     )
     inventory = models.PositiveIntegerField()
-    daily_fee = MoneyField(
-        decimal_places=2,
-        max_digits=8,
-        currency_default="USD",
-    )
+    daily_fee = models.DecimalField(max_digits=6, decimal_places=2)
