@@ -1,10 +1,10 @@
 from rest_framework import mixins
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet, GenericViewSet
 
 from borrowings.models import Borrowing
 from borrowings.serializers import (
     BorrowingListSerializer,
-    BorrowingDetailSerializer
+    BorrowingDetailSerializer, BorrowingCreateSerializer
 )
 
 
@@ -17,3 +17,12 @@ class BorrowingViewSet(ReadOnlyModelViewSet):
 
         if self.action == "retrieve":
             return BorrowingDetailSerializer
+
+
+class BorrowingCreateViewSet(
+    mixins.CreateModelMixin,
+    GenericViewSet,
+):
+    queryset = Borrowing.objects.all()
+    serializer_class = BorrowingCreateSerializer
+

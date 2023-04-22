@@ -1,4 +1,5 @@
 from django.db import models
+from djmoney.models.fields import MoneyField
 
 COVER_CHOICES = (
     ("H", "HARD"),
@@ -15,4 +16,7 @@ class Book(models.Model):
         default="H",
     )
     inventory = models.PositiveIntegerField()
-    daily_fee = models.DecimalField(max_digits=6, decimal_places=2)
+    daily_fee = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+
+    def __str__(self):
+        return f"'{self.title}' by {self.author}"

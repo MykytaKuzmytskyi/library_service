@@ -22,3 +22,14 @@ class BorrowingDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Borrowing
         fields = "__all__"
+
+
+class BorrowingCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Borrowing
+        fields = (
+            "borrow_date",
+            "expected_return_date",
+            "book",
+            "user",
+        )
