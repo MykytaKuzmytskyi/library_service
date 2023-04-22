@@ -10,4 +10,4 @@ urlpatterns = [
     path("", include(router.urls)),
 ]
 
-app_name = "books"
+app_name = "borrowings"
