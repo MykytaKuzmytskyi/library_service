@@ -1,7 +1,7 @@
-from rest_framework import status, mixins, serializers
-from rest_framework.permissions import AllowAny
+from rest_framework import status, mixins
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import GenericViewSet
 
 from books.models import Book
 from borrowings.models import Borrowing
@@ -13,13 +13,13 @@ from borrowings.serializers import (
 
 
 class BorrowingViewSet(
-        mixins.CreateModelMixin,
-        mixins.RetrieveModelMixin,
-        mixins.ListModelMixin,
-        GenericViewSet
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    GenericViewSet
 ):
     queryset = Borrowing.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated, )
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -37,8 +37,26 @@ class BorrowingViewSet(
             headers=headers
         )
 
+    @staticmethod
+    def _params_to_ints(qs):
+        """Converts a list of string IDs to a list of integers"""
+        return [int(str_id) for str_id in qs.split(",")]
+
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        queryset = Borrowing.objects.all()
+        is_active = self.request.query_params.get('is_active')
+        user_id = self.request.query_params.get('user_id')
+
+        if is_active is not None and self.request.user.is_authenticated:
+            queryset = queryset.filter(actual_return_date=None)
+
+        if user_id is not None and self.request.user.is_superuser:
+            user_ids = self._params_to_ints(user_id)
+            queryset = queryset.filter(user__id__in=user_ids)
+
+        if self.request.user.is_superuser:
+            return queryset
+        return queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -54,11 +72,10 @@ class BorrowingViewSet(
 
 class BorrowingReturnView(mixins.UpdateModelMixin, GenericViewSet):
     queryset = Borrowing.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAdminUser,)
     serializer_class = BorrowingReturnSerializer
 
     def update(self, request, *args, **kwargs):
-
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
