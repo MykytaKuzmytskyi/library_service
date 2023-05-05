@@ -32,7 +32,7 @@ class UnauthenticatedBookApiTests(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class AuthenticatedMovieApiTests(TestCase):
+class AuthenticatedBookApiTests(TestCase):
     def setUp(self) -> None:
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
