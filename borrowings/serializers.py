@@ -65,7 +65,12 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
         """
         return_date = self.instance.actual_return_date
         if self.instance.actual_return_date is not None:
-            raise serializers.ValidationError(f"This book has been returned {return_date.strftime('%Y.%m.%d %H:%M')}!")
-        if data['actual_return_date'] is None:
-            raise serializers.ValidationError("Field actual_return_date must not be empty!")
+            raise serializers.ValidationError(
+                f"This book has been returned "
+                f"{return_date.strftime('%Y.%m.%d %H:%M')}!"
+            )
+        if data["actual_return_date"] is None:
+            raise serializers.ValidationError(
+                "Field actual_return_date must not be empty!"
+            )
         return data

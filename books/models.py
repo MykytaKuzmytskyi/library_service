@@ -16,7 +16,11 @@ class Book(models.Model):
         default="H",
     )
     inventory = models.PositiveIntegerField()
-    daily_fee = MoneyField(max_digits=14, decimal_places=2, default_currency='USD')
+    daily_fee = MoneyField(
+        max_digits=14,
+        decimal_places=2,
+        default_currency="USD"
+    )
 
     def __str__(self):
         return f"'{self.title}' by {self.author}"

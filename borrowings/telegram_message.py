@@ -10,10 +10,10 @@ def send_telegram(text: str):
     url += token
     method = url + "/sendMessage"
 
-    r = requests.post(method, data={
+    req = requests.post(method, data={
         "chat_id": chat_id,
         "text": text
     })
 
-    if r.status_code != 200:
+    if req.status_code != 200:
         raise ValueError

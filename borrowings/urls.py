@@ -8,7 +8,9 @@ router.register("", BorrowingViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("<int:pk>/return/", BorrowingReturnView.as_view(actions={"put": "update"})),
+    path("<int:pk>/return/",
+         BorrowingReturnView.as_view(actions={"put": "update"})
+         ),
 ]
 
 app_name = "borrowings"
