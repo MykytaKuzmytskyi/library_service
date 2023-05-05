@@ -57,7 +57,6 @@ class BorrowingReturnSerializer(serializers.ModelSerializer):
             "id",
             "borrow_date",
             "actual_return_date",
-            "user",
         )
 
     def validate(self, data):
