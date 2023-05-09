@@ -1,12 +1,18 @@
 import os
 
 import requests
+from celery import shared_task
 
 
+# celery -A library_service worker -l INFO/
+from django.conf import settings
+
+
+@shared_task
 def send_telegram(text: str):
-    token = os.getenv("TELEGRAM_TOKEN")
+    token = settings.TOKEN
     url = "https://api.telegram.org/bot"
-    chat_id = os.getenv("CHAT_ID")
+    chat_id = settings.SHAT_ID
     url += token
     method = url + "/sendMessage"
 

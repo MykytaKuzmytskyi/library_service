@@ -11,7 +11,7 @@ from borrowings.serializers import (
     BorrowingDetailSerializer,
     BorrowingCreateSerializer, BorrowingReturnSerializer
 )
-from borrowings.telegram_message import send_telegram
+from borrowings.tasks import send_telegram
 
 
 class BorrowingViewSet(
@@ -33,7 +33,7 @@ class BorrowingViewSet(
         book.inventory -= 1
         book.save()
         try:
-            send_telegram(f"{book.title} borrowed by {self.request.user}")
+            send_telegram.delay(f"{book.title} borrowed by {self.request.user}")
         except ValueError:
             print("Message was not sent!"
                   "'chat_id' or 'token' data is not correct.")
