@@ -32,13 +32,10 @@ class BorrowingViewSet(
         book = Book.objects.get(id=self.request.data["book"])
         book.inventory -= 1
         book.save()
-        try:
-            send_telegram.delay(
-                f"{book.title} borrowed by {self.request.user}"
-            )
-        except ValueError:
-            print("Message was not sent!"
-                  "'chat_id' or 'token' data is not correct.")
+
+        send_telegram.delay(
+            f"{book.title} borrowed by {self.request.user}"
+        )
 
         return Response(
             serializer.data,
@@ -83,7 +80,7 @@ class BorrowingViewSet(
         return BorrowingListSerializer
 
     @action(
-        methods=["PUT"],
+        methods=["POST"],
         detail=True,
         url_path="return",
         permission_classes=[IsAdminUser]
@@ -99,5 +96,3 @@ class BorrowingViewSet(
             borrowing.book.save()
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
