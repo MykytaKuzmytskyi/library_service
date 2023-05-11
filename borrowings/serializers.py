@@ -41,13 +41,10 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
             "book",
         )
 
-    def validate(self, data):
-        """
-        Check that start is before finish.
-        """
-        if data["book"].inventory == 0:
+    def validate_book(self, book):
+        if book.inventory == 0:
             raise serializers.ValidationError("This book is not available.")
-        return data
+        return book
 
 
 class BorrowingReturnSerializer(serializers.ModelSerializer):
