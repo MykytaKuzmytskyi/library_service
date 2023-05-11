@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from rest_framework import status
@@ -11,6 +11,7 @@ from books.models import Book
 from books.tests.tests_book_api import sample_book
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingListSerializer
+from borrowings.tasks import send_telegram
 
 BORROWING_URL = reverse_lazy("borrowings:borrowing-list")
 
@@ -55,6 +56,10 @@ class AuthenticatedBorrowingApiTests(TestCase):
             book=book,
             user=self.user_two,
         )
+
+    # @override_settings(CELERY_ALWAYS_EAGER=True)
+    # def test_send_telegram(self):
+    #     self.assertTrue(send_telegram.delay("Test"))
 
     def test_non_admins_can_see_only_their_borrowings(self):
         response = self.client.get(BORROWING_URL)
@@ -113,7 +118,7 @@ class AdminBorrowingApiTests(TestCase):
         }
         borrowing = Borrowing.objects.get(pk=1)
         url = reverse("borrowings:borrowing-list") + f"{borrowing.pk}/return/"
-        response = self.client.put(url, data, )
+        response = self.client.post(url, data, )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -126,8 +131,8 @@ class AdminBorrowingApiTests(TestCase):
         borrowing = Borrowing.objects.get(user=self.user_admin)
         url = reverse("borrowings:borrowing-list") + f"{borrowing.pk}/return/"
 
-        response1 = self.client.put(url, data)
-        response2 = self.client.put(url, data)
+        response1 = self.client.post(url, data)
+        response2 = self.client.post(url, data)
         self.assertEqual(response1.status_code, status.HTTP_200_OK)
         self.assertEqual(response2.status_code, status.HTTP_400_BAD_REQUEST)
 
