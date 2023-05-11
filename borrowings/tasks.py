@@ -1,10 +1,6 @@
-import os
-
 import requests
 from celery import shared_task
 
-
-# celery -A library_service worker -l INFO/
 from django.conf import settings
 
 
