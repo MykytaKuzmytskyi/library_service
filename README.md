@@ -71,6 +71,33 @@ docker-compose up --build
 - Admin panel /admin/
 - Managing books and borrowings
 - Create, update, delete Books
-- Create and update (return) Borrowings
+- Create and return Borrowings
 - Filtering borrowings by is_active & user_id
 - Sending Telegram notifications about each Borrowing creation
+
+*REST API documentation*
+----
+  **Books Service**
+
+ - POST:      `books/`      - add new 
+ - GET:       `books/`      - get a list of books
+ - GET:       `books/<id>/` - get book's detail info 
+ - PUT/PATCH: `books/<id>/` - update book 
+ - DELETE:    `books/<id>/` - delete book
+
+  **Users Service**
+
+ - POST:       `users/`                - register a new user 
+ - POST:       `users/token/`          - get JWT tokens
+ - POST:       `users/token/refresh/` - refresh JWT token 
+ - POST:       `users/token/verify/ `  - verify JWT token
+ - GET:        `users/me/`             - get my profile info
+ - PUT/PATCH:  `users/me/`             - update profile info
+
+  **Borrowings Service**
+
+ - POST:      `borrowings/`      - add new borrowing 
+ - GET:       `borrowings/?user_id=...&is_active=...`- get borrowings by user id and whether is borrowing still active or not
+ - GET:       `borrowings/<id>/` - get borrowing's detail info 
+ - POST: `borrowings/<id>/return/` - set actual return date
+
